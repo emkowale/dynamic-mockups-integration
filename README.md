@@ -1,0 +1,1 @@
+I started using the Dynamic Mockups plugin and it didn't do everything I wanted. My client was all about the mockups. His clients need to see mockups on the fly and fast! Not only does this plugin do that, but it also attaches the customer uploaded image and the rendered image to the WooCommerce order.
