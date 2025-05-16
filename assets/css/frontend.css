@@ -1,0 +1,75 @@
+/*
+ * File: frontend.css
+ * Description: Front-end styling for image upload and rendering in Dynamic Mockups Integration
+ * Plugin: Dynamic Mockups Integration
+ * Author: Eric Kowalewski
+ * Last Updated: May 10, 2025 7:46 PM EDT
+ */
+
+ #dmi-upload-container {
+  margin-top: 60px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  max-width: 400px;
+  transition: height 0.3s ease;
+  overflow: hidden;
+}
+
+/*#dmi-upload-container .button {
+  font-size: 14px;
+  padding: 12px 24px;
+  background: #515151;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#dmi-upload-container .button:hover {
+  background: #333;
+}*/
+
+.dmi-preview-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+#dmi-spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.dmi-spinner {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #0073aa;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: dmi-spin 1s linear infinite;
+}
+
+@keyframes dmi-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.dmi-warning {
+  padding: 12px;
+  background: #ffe9e9;
+  border: 1px solid #e53935;
+  color: #b71c1c;
+  border-radius: 4px;
+  margin: 15px 0;
+}

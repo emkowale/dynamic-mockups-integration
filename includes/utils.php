@@ -1,0 +1,2 @@
+<?php
+// Shared utility functions
