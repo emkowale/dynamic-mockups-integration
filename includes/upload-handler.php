@@ -1,63 +1,88 @@
 <?php
 /*
  * File: upload-handler.php
- * Description: Handles AJAX image uploads from frontend.js
+ * Description: Handles AJAX image uploads for Dynamic Mockups with extensive console debugging
  * Plugin: Dynamic Mockups Integration
  * Author: Eric Kowalewski
- * Last Updated: May 10, 2025 9:56 PM EDT
+ * Last Updated: May 16, 2025 5:40 PM EDT
  */
 
 if (!defined('ABSPATH')) exit;
 
-// Frontend AJAX handler for logged-in and guest users
-add_action('wp_ajax_dmi_upload_image', 'dmi_upload_image_callback');
-add_action('wp_ajax_nopriv_dmi_upload_image', 'dmi_upload_image_callback');
+add_action('wp_ajax_dmi_upload_image', 'dmi_handle_image_upload');
+add_action('wp_ajax_nopriv_dmi_upload_image', 'dmi_handle_image_upload');
 
-function dmi_upload_image_callback() {
-    check_ajax_referer('dmi_upload');
+function dmi_handle_image_upload() {
+    $response_debug = [];
 
-    if (!isset($_FILES['file'])) {
-        wp_send_json_error(['message' => 'No file uploaded.']);
+    // ✅ Step 1: Nonce check
+    $response_debug['received_nonce'] = $_POST['_ajax_nonce'] ?? null;
+    $response_debug['expected_nonce_context'] = 'dmi_nonce';
+    $nonce_verified = check_ajax_referer('dmi_nonce', '_ajax_nonce', false);
+
+    if (!$nonce_verified) {
+        wp_send_json_error([
+            'message' => 'Security check failed.',
+            'debug' => $response_debug
+        ]);
+    }
+
+    // ✅ Step 2: File presence
+    if (!isset($_FILES['file']) || empty($_FILES['file']['tmp_name'])) {
+        $response_debug['file_received'] = false;
+        wp_send_json_error([
+            'message' => 'No file received.',
+            'debug' => $response_debug
+        ]);
     }
 
     $file = $_FILES['file'];
+    $response_debug['file_received'] = true;
+    $response_debug['original_name'] = $file['name'] ?? null;
+    $response_debug['type'] = $file['type'] ?? null;
+    $response_debug['size'] = $file['size'] ?? null;
 
-    // Validate file type
+    // ✅ Step 3: File type check
     $allowed_types = ['image/png', 'image/jpeg'];
     if (!in_array($file['type'], $allowed_types)) {
-        wp_send_json_error(['message' => 'Only PNG and JPG files are allowed.']);
+        $response_debug['file_allowed'] = false;
+        wp_send_json_error([
+            'message' => 'Invalid file type. Only PNG and JPG are allowed.',
+            'debug' => $response_debug
+        ]);
     }
 
-    // Upload the file to the WordPress Media Library
-    require_once(ABSPATH . 'wp-admin/includes/file.php');
-    require_once(ABSPATH . 'wp-admin/includes/media.php');
-    require_once(ABSPATH . 'wp-admin/includes/image.php');
+    $response_debug['file_allowed'] = true;
 
-    $upload_overrides = ['test_form' => false];
+    // ✅ Step 4: Upload to WP
+    require_once ABSPATH . 'wp-admin/includes/file.php';
+
+    $upload_overrides = [
+        'test_form' => false,
+        'mimes' => [
+            'jpg|jpeg|jpe' => 'image/jpeg',
+            'png' => 'image/png'
+        ]
+    ];
+
     $movefile = wp_handle_upload($file, $upload_overrides);
 
-    if (!$movefile || isset($movefile['error'])) {
-        wp_send_json_error(['message' => 'Upload failed.', 'details' => $movefile['error'] ?? 'Unknown error']);
+    if ($movefile && !isset($movefile['error'])) {
+        $response_debug['upload_success'] = true;
+        $response_debug['uploaded_file_path'] = $movefile['file'] ?? null;
+        $response_debug['public_url'] = $movefile['url'] ?? null;
+
+        wp_send_json_success([
+            'url' => esc_url_raw($movefile['url']),
+            'debug' => $response_debug
+        ]);
+    } else {
+        $response_debug['upload_success'] = false;
+        $response_debug['error'] = $movefile['error'] ?? 'Unknown error';
+
+        wp_send_json_error([
+            'message' => 'Upload failed.',
+            'debug' => $response_debug
+        ]);
     }
-
-    // Optionally insert into Media Library
-    $attachment_id = wp_insert_attachment([
-        'guid'           => $movefile['url'],
-        'post_mime_type' => $movefile['type'],
-        'post_title'     => sanitize_file_name($file['name']),
-        'post_content'   => '',
-        'post_status'    => 'inherit'
-    ], $movefile['file']);
-
-    if (!is_wp_error($attachment_id)) {
-        require_once(ABSPATH . 'wp-admin/includes/image.php');
-        $attach_data = wp_generate_attachment_metadata($attachment_id, $movefile['file']);
-        wp_update_attachment_metadata($attachment_id, $attach_data);
-    }
-
-    // Return the image URL
-    wp_send_json_success([
-        'url' => $movefile['url'],
-        'attachment_id' => $attachment_id
-    ]);
 }
