@@ -1,17 +1,18 @@
 /*
  * File: frontend.js
- * Description: Uploads and renders image with Dynamic Mockups API using smart_objects array, full console debugging
+ * Description: Uploads, renders, and restores WooCommerce zoom after image replacement
  * Plugin: Dynamic Mockups Integration
  * Author: Eric Kowalewski
- * Last Updated: May 16, 2025 8:50 PM EDT
+ * Last Updated: May 17, 2025 01:20 AM EDT
  */
 
 jQuery(document).ready(function ($) {
     console.log('✅ DMI Debug: frontend.js initialized');
 
     let uploadedImageUrl = null;
-
-    $('.dmi-label[for="dmi-upload"]').remove();
+    let renderedImageUrl = null;
+    let originalImageSrc = null;
+    let originalLargeImage = null;
 
     const $uploadButton = $('#dmi-upload-button');
     if ($uploadButton.length) {
@@ -21,6 +22,18 @@ jQuery(document).ready(function ($) {
 
     if ($('#dmi-spinner').length === 0) {
         $('body').append('<div id="dmi-spinner"><div></div></div>');
+    }
+
+    if ($('#dmi-confirm-overlay').length === 0) {
+        $('body').append(`
+            <div id="dmi-confirm-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.4); z-index:10000;">
+                <div style="background:#fff; padding:20px 30px; border-radius:10px; max-width:400px; margin:100px auto; text-align:center; box-shadow:0 0 20px rgba(0,0,0,0.3);">
+                    <p style="font-size:16px; margin-bottom:20px;">⚠️ You didn’t upload an image. Do you want to continue and order it blank?</p>
+                    <button id="dmi-confirm-yes" class="button" style="margin-right:10px;">Yes</button>
+                    <button id="dmi-confirm-no" class="button">No</button>
+                </div>
+            </div>
+        `);
     }
 
     function showSpinner() {
@@ -43,10 +56,9 @@ jQuery(document).ready(function ($) {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('action', 'dmi_upload_image');
-
-        console.log('🔐 Upload Nonce:', dmi_ajax.nonce);
         formData.append('_ajax_nonce', dmi_ajax.nonce);
 
+        console.log('🔐 Upload Nonce:', dmi_ajax.nonce);
         showSpinner();
         console.log('📤 Uploading image...');
 
@@ -61,24 +73,11 @@ jQuery(document).ready(function ($) {
 
                 if (!response?.data?.url) {
                     console.error('❌ Upload failed:', response);
-                    if (response?.data?.message) {
-                        console.warn('📛 Server message:', response.data.message);
-                    }
-                    if (response?.data?.error) {
-                        console.warn('📛 Upload error detail:', response.data.error);
-                    }
-                    if (response?.data?.debug) {
-                        console.warn('🐞 DMI Upload Failure Debug:', response.data.debug);
-                    }
                     return;
                 }
 
                 uploadedImageUrl = response.data.url;
                 console.log('🔗 Uploaded Image:', uploadedImageUrl);
-
-                if (response.data.debug) {
-                    console.log('🧪 DMI Upload Debug:', response.data.debug);
-                }
 
                 if ($('#dmi-upload-preview').length) {
                     $('#dmi-upload-preview').html(`<img src="${uploadedImageUrl}" style="max-width: 100%; margin-top: 10px;">`);
@@ -105,8 +104,6 @@ jQuery(document).ready(function ($) {
                 };
 
                 console.log('📤 Rendering With Image:', uploadedImageUrl);
-                console.log('📦 DMI Render Request Payload:', JSON.stringify(renderPayload, null, 2));
-
                 showSpinner();
 
                 $.ajax({
@@ -117,50 +114,46 @@ jQuery(document).ready(function ($) {
                         hideSpinner();
 
                         if (renderResponse.success && renderResponse.data.rendered_url) {
-                            const renderedUrl = renderResponse.data.rendered_url;
-                            console.log('🎯 Rendered Image URL:', renderedUrl);
-                            console.log('🧪 DMI Render Debug:', renderResponse.data.debug); // ✅ FIXED
+                            renderedImageUrl = renderResponse.data.rendered_url;
+                            console.log('🎯 Rendered Image URL:', renderedImageUrl);
 
-                            const uploadedName = uploadedImageUrl.split('/').pop();
-                            if (!renderedUrl.includes(uploadedName)) {
-                                console.warn(`⚠️ Mismatch: Rendered image does not visibly contain uploaded image filename (${uploadedName})`);
-                            }
+                            $('#dmi-upload-preview').html(`<img src="${renderedImageUrl}" style="max-width: 100%; margin-top: 10px;">`);
 
-                            if ($('#dmi-upload-preview').length) {
-                                $('#dmi-upload-preview').html(`<img src="${renderedUrl}" style="max-width: 100%; margin-top: 10px;">`);
-                            }
-
+                            const $mainImg = $('.woocommerce-product-gallery img.wp-post-image');
                             const $gallery = $('.woocommerce-product-gallery');
-                            const $mainImg = $gallery.find('img.wp-post-image');
 
                             if ($mainImg.length) {
-                                $mainImg.attr('src', renderedUrl)
-                                        .attr('data-src', renderedUrl)
-                                        .attr('data-large_image', renderedUrl)
-                                        .attr('data-large_image_width', 800)
-                                        .attr('data-large_image_height', 800)
-                                        .removeAttr('srcset')
-                                        .removeAttr('sizes');
+                                originalImageSrc = $mainImg.attr('src');
+                                originalLargeImage = $mainImg.attr('data-large_image');
 
-                                console.log('🖼️ WooCommerce image src + metadata updated');
+                                $mainImg.attr('src', renderedImageUrl)
+                                    .attr('data-src', renderedImageUrl)
+                                    .attr('data-large_image', renderedImageUrl)
+                                    .attr('data-large_image_width', 800)
+                                    .attr('data-large_image_height', 800)
+                                    .removeAttr('srcset')
+                                    .removeAttr('sizes');
                             }
 
-                            if ($gallery.hasClass('woocommerce-product-gallery--with-images')) {
-                                if (typeof $.fn.wc_product_gallery !== 'undefined') {
-                                    $gallery.each(function () {
-                                        $(this).data('wc_product_gallery')?.init();
-                                    });
-                                    console.log('🔁 WooCommerce gallery forcibly reinitialized');
+                            $('.woocommerce-product-gallery .woocommerce-product-gallery__image').css({
+                                'background-image': `url(${renderedImageUrl})`
+                            });
+
+                            $('img.zoomImg').attr('src', renderedImageUrl);
+
+                            // 🔁 Manual zoom rebind for The7
+                            setTimeout(() => {
+                                if ($.fn.zoom) {
+                                    $('.woocommerce-product-gallery .woocommerce-product-gallery__image a').trigger('zoom.destroy');
+                                    $('.woocommerce-product-gallery .woocommerce-product-gallery__image a').zoom();
+                                    console.log('🔁 Manual zoom reinitialized via .zoom()');
                                 }
-                            }
+                            }, 200);
+
+                            $('#dmi-upload-container').slideUp();
+                            console.log('🙈 Upload UI hidden after render');
                         } else {
                             console.error('❌ Render failed:', renderResponse);
-                            if (renderResponse.data) {
-                                console.log('🧩 Full render error response:', renderResponse.data);
-                            }
-                            if (renderResponse.data?.debug) {
-                                console.log('🧪 DMI Render Debug:', renderResponse.data.debug); // ✅ FIXED
-                            }
                         }
                     },
                     error: function (xhr, status, error) {
@@ -174,5 +167,21 @@ jQuery(document).ready(function ($) {
                 console.error('❌ Upload error:', err);
             }
         });
+    });
+
+    $('form.cart').on('submit', function (e) {
+        if (!renderedImageUrl) {
+            e.preventDefault();
+            $('#dmi-confirm-overlay').fadeIn();
+
+            $('#dmi-confirm-yes').off('click').on('click', function () {
+                $('#dmi-confirm-overlay').fadeOut();
+                $('form.cart')[0].submit();
+            });
+
+            $('#dmi-confirm-no').off('click').on('click', function () {
+                $('#dmi-confirm-overlay').fadeOut();
+            });
+        }
     });
 });

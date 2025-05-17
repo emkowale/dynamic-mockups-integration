@@ -4,7 +4,7 @@
  * Description: Frontend UI and script handling for image upload and Dynamic Mockups rendering
  * Plugin: Dynamic Mockups Integration
  * Author: Eric Kowalewski
- * Last Updated: May 16, 2025 1:45 PM EDT
+ * Last Updated: May 17, 2025 1:28 AM EDT
  */
 
 if (!defined('ABSPATH')) exit;
@@ -58,10 +58,9 @@ add_action('woocommerce_after_add_to_cart_button', function () {
     echo "<script>console.log('✅ DMI: Injecting upload UI under Add to Cart');</script>";
     ?>
 
-    <div id="dmi-upload-container">
-        <label for="dmi-upload" class="dmi-label">Upload your image:</label>
+    <div id="dmi-upload-container" style="background: none; border: none; padding: 0;">
         <input type="file" id="dmi-upload" accept="image/png, image/jpeg" style="display:none;">
-        <button type="button" id="dmi-upload-button">Choose Image</button>
+        <button type="button" id="dmi-upload-button">Upload your own image</button>
         <div id="dmi-upload-preview"></div>
     </div>
 
