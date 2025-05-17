@@ -3,34 +3,23 @@
  * Description: Front-end styling for image upload and rendering in Dynamic Mockups Integration
  * Plugin: Dynamic Mockups Integration
  * Author: Eric Kowalewski
- * Last Updated: May 10, 2025 7:46 PM EDT
+ * Last Updated: May 17, 2025 1:42 AM EDT
  */
 
- #dmi-upload-container {
+#dmi-upload-container {
   margin-top: 60px;
-  padding: 15px;
-  border: 1px solid #ccc;
-  background-color: #f9f9f9;
+  background: none !important;
+  border: none !important;
+  padding: 0;
   max-width: 400px;
-  transition: height 0.3s ease;
   overflow: hidden;
 }
 
-/*#dmi-upload-container .button {
-  font-size: 14px;
-  padding: 12px 24px;
-  background: #515151;
-  color: #fff;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: background 0.3s ease;
+#dmi-upload-button {
+  margin-top: 10px;
 }
 
-#dmi-upload-container .button:hover {
-  background: #333;
-}*/
-
+/* Preview image styling */
 .dmi-preview-image {
   max-width: 100%;
   height: auto;
@@ -38,6 +27,7 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
+/* Full-screen spinner overlay */
 #dmi-spinner-overlay {
   position: fixed;
   top: 0;
@@ -65,6 +55,7 @@
   100% { transform: rotate(360deg); }
 }
 
+/* Warning banner */
 .dmi-warning {
   padding: 12px;
   background: #ffe9e9;
@@ -72,4 +63,17 @@
   color: #b71c1c;
   border-radius: 4px;
   margin: 15px 0;
+}
+
+/* Ensure rendered zoom stays inside product gallery */
+.woocommerce-product-gallery {
+  overflow: hidden;
+  position: relative;
+}
+
+.woocommerce-product-gallery img.zoomImg {
+  max-width: none !important;
+  max-height: none !important;
+  z-index: 99;
+  pointer-events: none;
 }
