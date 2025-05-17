@@ -1,0 +1,29 @@
+.
+├── admin
+│   └── admin.css
+├── assets
+│   ├── css
+│   │   └── frontend.css
+│   ├── img
+│   │   └── spinner.svg
+│   └── js
+│       ├── admin-product.js
+│       ├── admin-settings.js
+│       └── frontend.js
+├── dynamic-mockups-integration.php
+├── frontend
+│   ├── cleanup.php
+│   ├── email-hooks.php
+│   └── render-handler.php
+├── includes
+│   ├── admin-settings.php
+│   ├── ajax-render.php
+│   ├── api.php
+│   ├── class-dmi-render-endpoint.php
+│   ├── frontend-ui.php
+│   ├── product-meta-box.php
+│   ├── upload-handler.php
+│   └── utils.php
+└── plugin-filetree.txt
+
+7 directories, 19 files

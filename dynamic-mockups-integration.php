@@ -4,7 +4,7 @@
  * Description: Integrates Dynamic Mockups API with WooCommerce for live previews and featured image setting.
  * Author: Eric Kowalewski
  * Version: 1.9.6
- * Last Updated: May 16, 2025 12:45 PM EDT
+ * Last Updated: May 17, 2025 23:52 EDT
  */
 
 if (!defined('ABSPATH')) exit;
@@ -21,5 +21,8 @@ require_once plugin_dir_path(__FILE__) . 'includes/upload-handler.php';
 // === AJAX Render Handler ===
 require_once plugin_dir_path(__FILE__) . 'includes/ajax-render.php';
 
-// === Frontend Upload UI + Script Loader ===
+// === Frontend Upload UI ===
 require_once plugin_dir_path(__FILE__) . 'includes/frontend-ui.php';
+
+// ✅ Modular JS and CSS enqueuing (must be after UI injection)
+require_once plugin_dir_path(__FILE__) . 'includes/enqueue-scripts.php';

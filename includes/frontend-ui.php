@@ -4,7 +4,7 @@
  * Description: Frontend UI and script handling for image upload and Dynamic Mockups rendering
  * Plugin: Dynamic Mockups Integration
  * Author: Eric Kowalewski
- * Last Updated: May 17, 2025 1:28 AM EDT
+ * Last Updated: May 17, 2025 23:36 EDT
  */
 
 if (!defined('ABSPATH')) exit;
@@ -20,16 +20,9 @@ add_action('wp_enqueue_scripts', function () {
         '1.9.6'
     );
 
-    wp_enqueue_script(
-        'dmi-frontend',
-        plugin_dir_url(__FILE__) . '../assets/js/frontend.js',
-        array('jquery'),
-        '1.9.6',
-        true
-    );
+    // Removed: wp_enqueue_script('dmi-frontend', ...)
 
-    // ✅ Match this nonce key with check_ajax_referer() in upload-handler.php
-    wp_localize_script('dmi-frontend', 'dmi_ajax', array(
+    wp_localize_script('dmi-upload-handler', 'dmi_ajax', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce'    => wp_create_nonce('dmi_nonce'),
         'api_key'  => get_option('dmi_api_key') ?: ''

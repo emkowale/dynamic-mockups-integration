@@ -1,10 +1,10 @@
 <?php
 /*
- * File: upload-handler.php
+ * File: includes/upload-handler.php
  * Description: Handles AJAX image uploads for Dynamic Mockups with extensive console debugging
  * Plugin: Dynamic Mockups Integration
  * Author: Eric Kowalewski
- * Last Updated: May 16, 2025 5:40 PM EDT
+ * Last Updated: May 17, 2025 3:40 AM EDT
  */
 
 if (!defined('ABSPATH')) exit;
@@ -54,31 +54,32 @@ function dmi_handle_image_upload() {
 
     $response_debug['file_allowed'] = true;
 
-    // ✅ Step 4: Upload to WP
+    // ✅ Step 4: Upload to /dmi-temp/
     require_once ABSPATH . 'wp-admin/includes/file.php';
+    $upload_dir = wp_upload_dir();
+    $target_dir = trailingslashit($upload_dir['basedir']) . 'dmi-temp/';
+    $target_url = trailingslashit($upload_dir['baseurl']) . 'dmi-temp/';
 
-    $upload_overrides = [
-        'test_form' => false,
-        'mimes' => [
-            'jpg|jpeg|jpe' => 'image/jpeg',
-            'png' => 'image/png'
-        ]
-    ];
+    if (!file_exists($target_dir)) {
+        wp_mkdir_p($target_dir);
+    }
 
-    $movefile = wp_handle_upload($file, $upload_overrides);
+    $filename = wp_unique_filename($target_dir, $file['name']);
+    $destination = $target_dir . $filename;
+    $public_url = $target_url . $filename;
 
-    if ($movefile && !isset($movefile['error'])) {
+    if (move_uploaded_file($file['tmp_name'], $destination)) {
         $response_debug['upload_success'] = true;
-        $response_debug['uploaded_file_path'] = $movefile['file'] ?? null;
-        $response_debug['public_url'] = $movefile['url'] ?? null;
+        $response_debug['uploaded_file_path'] = $destination;
+        $response_debug['public_url'] = $public_url;
 
         wp_send_json_success([
-            'url' => esc_url_raw($movefile['url']),
+            'url' => esc_url_raw($public_url),
             'debug' => $response_debug
         ]);
     } else {
         $response_debug['upload_success'] = false;
-        $response_debug['error'] = $movefile['error'] ?? 'Unknown error';
+        $response_debug['error'] = 'move_uploaded_file failed';
 
         wp_send_json_error([
             'message' => 'Upload failed.',
