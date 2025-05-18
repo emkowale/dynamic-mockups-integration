@@ -20,8 +20,6 @@ add_action('wp_enqueue_scripts', function () {
         '1.9.6'
     );
 
-    // Removed: wp_enqueue_script('dmi-frontend', ...)
-
     wp_localize_script('dmi-upload-handler', 'dmi_ajax', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce'    => wp_create_nonce('dmi_nonce'),

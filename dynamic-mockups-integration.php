@@ -26,3 +26,6 @@ require_once plugin_dir_path(__FILE__) . 'includes/frontend-ui.php';
 
 // ✅ Modular JS and CSS enqueuing (must be after UI injection)
 require_once plugin_dir_path(__FILE__) . 'includes/enqueue-scripts.php';
+
+// ✅ Enforce price requirement for Simple products
+require_once plugin_dir_path(__FILE__) . 'includes/validate-product-price.php';
