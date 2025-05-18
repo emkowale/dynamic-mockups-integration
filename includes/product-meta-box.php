@@ -4,7 +4,7 @@
  * Description: Adds mockup UUID and smart object UUID fields with dynamic dropdown filtering and sets product image
  * Plugin: Dynamic Mockups Integration
  * Author: Eric Kowalewski
- * Last Updated: May 7, 2025 1:34 PM EDT
+ * Last Updated: May 17, 2025 23:58 EDT
  */
 
 if (!defined('ABSPATH')) exit;
@@ -59,7 +59,13 @@ add_action('woocommerce_process_product_meta', function($post_id) {
             require_once ABSPATH . 'wp-admin/includes/file.php';
             require_once ABSPATH . 'wp-admin/includes/media.php';
 
-            // Download and sideload the image
+            // 🪝 Remove existing product image if present
+            $existing_thumbnail_id = get_post_thumbnail_id($post_id);
+            if ($existing_thumbnail_id) {
+                wp_delete_attachment($existing_thumbnail_id, true);
+            }
+
+            // 📅 Download and sideload the image
             $tmp = download_url($thumbnail_url);
             if (!is_wp_error($tmp)) {
                 $file_array = [
