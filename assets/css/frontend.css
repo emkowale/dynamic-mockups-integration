@@ -3,7 +3,7 @@
  * Description: Front-end styling for image upload and rendering in Dynamic Mockups Integration
  * Plugin: Dynamic Mockups Integration
  * Author: Eric Kowalewski
- * Last Updated: May 17, 2025 1:42 AM EDT
+ * Last Updated: May 19, 2025 00:28 EDT
  */
 
 #dmi-upload-container {
@@ -76,4 +76,32 @@
   max-height: none !important;
   z-index: 99;
   pointer-events: none;
+}
+
+/* ✅ Stronger DMI Cart Layout Fix */
+.woocommerce-cart table.cart {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.woocommerce-cart table.cart td.product-thumbnail {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  padding-right: 0;
+  vertical-align: middle;
+}
+
+.woocommerce-cart table.cart td.product-name {
+  padding-left: 12px;
+  word-wrap: break-word;
+  white-space: normal;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.woocommerce-cart table.cart img {
+  display: block;
+  max-width: 100%;
+  height: auto;
 }

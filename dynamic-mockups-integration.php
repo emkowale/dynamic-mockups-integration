@@ -4,7 +4,7 @@
  * Description: Integrates Dynamic Mockups API with WooCommerce for live previews and featured image setting.
  * Author: Eric Kowalewski
  * Version: 1.9.6
- * Last Updated: May 17, 2025 23:52 EDT
+ * Last Updated: May 19, 2025 00:18 EDT
  */
 
 if (!defined('ABSPATH')) exit;
@@ -29,3 +29,6 @@ require_once plugin_dir_path(__FILE__) . 'includes/enqueue-scripts.php';
 
 // ✅ Enforce price requirement for Simple products
 require_once plugin_dir_path(__FILE__) . 'includes/validate-product-price.php';
+
+// ✅ Cart image override logic (rendered thumbnail support)
+require_once plugin_dir_path(__FILE__) . 'includes/cart-thumbnail.php';
