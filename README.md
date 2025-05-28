@@ -39,49 +39,7 @@ The **Dynamic Mockups Integration** plugin connects your WooCommerce store with 
 
 ---
 
-## 📁 File Structure
-
-dynamic-mockups-integration/
-├── admin/
-│ └── admin.css
-├── assets/
-│ ├── css/
-│ │ └── frontend.css
-│ ├── img/
-│ │ └── spinner.svg
-│ └── js/
-│ ├── admin-product.js
-│ ├── admin-settings.js
-│ ├── confirm-overlay.js
-│ ├── form-guard.js
-│ ├── render-handler.js
-│ ├── ui-init.js
-│ ├── upload-handler.js
-│ └── zoom.js
-├── frontend/
-│ ├── account-thumbnails.php
-│ ├── cart-hooks.php
-│ ├── cart-meta-injection.php
-│ ├── cart-thumbnail.php
-│ ├── cart-thumbnails.php
-│ ├── cleanup.php
-│ ├── email-hooks.php
-│ └── render-handler.php
-├── includes/
-│ ├── admin-settings.php
-│ ├── ajax-render.php
-│ ├── api.php
-│ ├── cart-thumbnail.php
-│ ├── class-dmi-render-endpoint.php
-│ ├── enqueue-scripts.php
-│ ├── frontend-ui.php
-│ ├── product-meta-box.php
-│ ├── upload-handler.php
-│ ├── utils.php
-│ └── validate-product-price.php
-├── dynamic-mockups-integration.php
-├── list-files.php
-├── plugin-filetree.txt
+<pre lang="nohighlight"><code>## 📁 File Structure ``` dynamic-mockups-integration/ ├── admin/ │ └── admin.css ├── assets/ │ ├── css/ │ │ └── frontend.css │ ├── img/ │ │ └── spinner.svg │ └── js/ │ ├── admin-product.js │ ├── admin-settings.js │ ├── confirm-overlay.js │ ├── form-guard.js │ ├── render-handler.js │ ├── ui-init.js │ ├── upload-handler.js │ └── zoom.js ├── frontend/ │ ├── account-thumbnails.php │ ├── cart-hooks.php │ ├── cart-meta-injection.php │ ├── cart-thumbnail.php │ ├── cart-thumbnails.php │ ├── cleanup.php │ ├── email-hooks.php │ └── render-handler.php ├── includes/ │ ├── admin-settings.php │ ├── ajax-render.php │ ├── api.php │ ├── cart-thumbnail.php │ ├── class-dmi-render-endpoint.php │ ├── enqueue-scripts.php │ ├── frontend-ui.php │ ├── product-meta-box.php │ ├── upload-handler.php │ ├── utils.php │ └── validate-product-price.php ├── dynamic-mockups-integration.php ├── list-files.php ├── plugin-filetree.txt ``` </code></pre>
 
 
 ---
