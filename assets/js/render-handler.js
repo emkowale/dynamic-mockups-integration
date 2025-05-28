@@ -3,7 +3,7 @@
  * Description: Sends uploaded image to Dynamic Mockups render endpoint
  * Plugin: Dynamic Mockups Integration
  * Author: Eric Kowalewski
- * Last Updated: May 18, 2025 00:16 EDT
+ * Last Updated: May 28, 2025 10:46 EDT
  */
 
 jQuery(document).on('dmi:imageUploaded', function (e, uploadedImageUrl) {
@@ -58,8 +58,24 @@ jQuery(document).on('dmi:imageUploaded', function (e, uploadedImageUrl) {
           window.dmi_renderedImageUrl = renderedImageUrl;
           jQuery('#dmi-rendered-image-field').val(renderedImageUrl);
 
-          jQuery(document).trigger('dmi:imageRendered', [renderedImageUrl]);
+          // ✅ Inject hidden field into form
+          const $form = jQuery('form.cart');
+          if ($form.length) {
+            let $existing = $form.find('input[name="dmi_rendered_image"]');
+            if ($existing.length === 0) {
+              const $hiddenInput = jQuery('<input>')
+                .attr('type', 'hidden')
+                .attr('name', 'dmi_rendered_image')
+                .val(renderedImageUrl);
+              $form.append($hiddenInput);
+              console.log('✅ DMI: Injected hidden input with rendered image:', renderedImageUrl);
+            } else {
+              $existing.val(renderedImageUrl);
+              console.log('🔁 DMI: Updated hidden input with new rendered image:', renderedImageUrl);
+            }
+          }
 
+          jQuery(document).trigger('dmi:imageRendered', [renderedImageUrl]);
           jQuery('#dmi-spinner-overlay').fadeOut();
         };
 
