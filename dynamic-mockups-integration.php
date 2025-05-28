@@ -32,3 +32,13 @@ require_once plugin_dir_path(__FILE__) . 'includes/validate-product-price.php';
 
 // ✅ Cart image override logic (rendered thumbnail support)
 require_once plugin_dir_path(__FILE__) . 'includes/cart-thumbnail.php';
+
+//require_once plugin_dir_path(__FILE__) . 'includes/email-hooks.php';
+
+require_once plugin_dir_path(__FILE__) . 'includes/test-email-preview.php';
+
+require_once plugin_dir_path(__FILE__) . 'includes/save-order-meta.php';
+
+require_once plugin_dir_path(__FILE__) . 'includes/email-render-handler.php';
+
+require_once plugin_dir_path(__FILE__) . 'includes/remove-email-product-image.php';

@@ -3,7 +3,7 @@
  * Description: Sends uploaded image to Dynamic Mockups render endpoint
  * Plugin: Dynamic Mockups Integration
  * Author: Eric Kowalewski
- * Last Updated: May 28, 2025 15:36 EDT
+ * Last Updated: May 28, 2025 17:27 EDT
  */
 
 jQuery(document).on('dmi:imageUploaded', function (e, uploadedImageUrl) {
@@ -61,9 +61,15 @@ jQuery(document).on('dmi:imageUploaded', function (e, uploadedImageUrl) {
           jQuery('img.zoomImg').attr('src', renderedImageUrl);
           jQuery('#dmi-upload-container').slideUp();
 
+          // Save to global + hidden input
           window.dmi_renderedImageUrl = renderedImageUrl;
-          jQuery('#dmi-rendered-image-field').val(renderedImageUrl);
 
+          // ✅ Set hidden fields for cart submission
+          jQuery('#dmi_rendered_image_url_field').val(renderedImageUrl);
+          jQuery('#dmi_uploaded_image_url_field').val(uploadedImageUrl);
+          console.log('✅ DMI: Updated hidden fields for cart submission');
+
+          // Also set fallback hidden input (legacy support)
           const $form = jQuery('form.cart');
           if ($form.length) {
             let $existing = $form.find('input[name="dmi_rendered_image"]');
@@ -73,10 +79,10 @@ jQuery(document).on('dmi:imageUploaded', function (e, uploadedImageUrl) {
                 .attr('name', 'dmi_rendered_image')
                 .val(renderedImageUrl);
               $form.append($hiddenInput);
-              console.log('✅ DMI: Injected hidden input with rendered image:', renderedImageUrl);
+              console.log('✅ DMI: Injected fallback hidden input:', renderedImageUrl);
             } else {
               $existing.val(renderedImageUrl);
-              console.log('🔁 DMI: Updated hidden input with new rendered image:', renderedImageUrl);
+              console.log('🔁 DMI: Updated fallback input with new rendered image:', renderedImageUrl);
             }
           }
 
