@@ -43,7 +43,7 @@
 
 .dmi-spinner {
   border: 8px solid #f3f3f3;
-  border-top: 8px solid #0073aa;
+  border-top: 8px solid #863d3d;
   border-radius: 50%;
   width: 60px;
   height: 60px;
@@ -104,4 +104,10 @@
   display: block;
   max-width: 100%;
   height: auto;
+}
+
+.blockUI.blockOverlay {
+  display: none !important;
+  opacity: 0 !important;
+  z-index: -9999 !important;
 }

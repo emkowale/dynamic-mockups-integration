@@ -3,13 +3,19 @@
  * Description: Sends uploaded image to Dynamic Mockups render endpoint
  * Plugin: Dynamic Mockups Integration
  * Author: Eric Kowalewski
- * Last Updated: May 28, 2025 10:46 EDT
+ * Last Updated: May 28, 2025 15:36 EDT
  */
 
 jQuery(document).on('dmi:imageUploaded', function (e, uploadedImageUrl) {
   console.log('📤 Rendering With Image:', uploadedImageUrl);
 
-  // Ensure spinner is visible from start of upload through end of render
+  // ✅ Temporarily disable jQuery.blockUI to prevent white overlay
+  const originalBlockUI = jQuery.blockUI;
+  jQuery.blockUI = function () {
+    console.log('🚫 jQuery.blockUI was called and blocked.');
+  };
+
+  // Ensure spinner is visible
   jQuery('#dmi-spinner-overlay').fadeIn();
 
   const formData = new FormData();
@@ -58,7 +64,6 @@ jQuery(document).on('dmi:imageUploaded', function (e, uploadedImageUrl) {
           window.dmi_renderedImageUrl = renderedImageUrl;
           jQuery('#dmi-rendered-image-field').val(renderedImageUrl);
 
-          // ✅ Inject hidden field into form
           const $form = jQuery('form.cart');
           if ($form.length) {
             let $existing = $form.find('input[name="dmi_rendered_image"]');
@@ -77,17 +82,29 @@ jQuery(document).on('dmi:imageUploaded', function (e, uploadedImageUrl) {
 
           jQuery(document).trigger('dmi:imageRendered', [renderedImageUrl]);
           jQuery('#dmi-spinner-overlay').fadeOut();
+
+          // 🔓 Restore blockUI behavior
+          jQuery.blockUI = originalBlockUI;
+          console.log('🔓 jQuery.blockUI restored.');
         };
 
         image.src = renderedImageUrl;
       } else {
         console.error('❌ Render failed:', response);
         jQuery('#dmi-spinner-overlay').fadeOut();
+
+        // 🔓 Restore blockUI behavior
+        jQuery.blockUI = originalBlockUI;
+        console.log('🔓 jQuery.blockUI restored.');
       }
     },
     error: function (xhr, status, error) {
       jQuery('#dmi-spinner-overlay').fadeOut();
       console.error('❌ AJAX error during render:', error);
+
+      // 🔓 Restore blockUI behavior
+      jQuery.blockUI = originalBlockUI;
+      console.log('🔓 jQuery.blockUI restored.');
     }
   });
 });

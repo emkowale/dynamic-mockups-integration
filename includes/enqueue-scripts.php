@@ -4,14 +4,14 @@
  * Description: Enqueues modular frontend JS files for Dynamic Mockups Integration
  * Plugin: Dynamic Mockups Integration
  * Author: Eric Kowalewski
- * Last Updated: May 19, 2025 00:33 EDT
+ * Last Updated: May 28, 2025 15:47 EDT
  */
 
 function dmi_enqueue_modular_scripts() {
     $plugin_url = plugin_dir_url(__DIR__);
 
-    // ✅ Always load the CSS on product and cart pages
-    if (is_product() || is_cart()) {
+    // ✅ Load CSS on product, cart, and checkout pages
+    if (is_product() || is_cart() || is_checkout()) {
         wp_enqueue_style('dmi-frontend-style', $plugin_url . 'assets/css/frontend.css', [], '1.9.6');
     }
 
