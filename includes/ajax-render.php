@@ -4,7 +4,7 @@
  * Description: Uses smart_objects array from frontend and renders via Dynamic Mockups API using asset.url format
  * Plugin: Dynamic Mockups Integration
  * Author: Eric Kowalewski
- * Last Updated: May 16, 2025 9:50 PM EDT
+ * Last Updated: May 28, 2025 23:05 EDT
  */
 
 if (!defined('ABSPATH')) exit;
@@ -146,8 +146,31 @@ function dmi_handle_render_request() {
         $debug['warnings'] = $decoded['data']['warnings'];
     }
 
+    // ✅ Cleanup old files in /dmi-temp/ older than 30 days
+    dmi_cleanup_old_temp_files(30);
+
     wp_send_json_success([
         'rendered_url' => esc_url_raw($decoded['data']['export_path']),
         'debug' => $debug
     ]);
+}
+
+/**
+ * Delete any files in /uploads/dmi-temp/ older than X days
+ */
+function dmi_cleanup_old_temp_files($days = 30) {
+    $upload_dir = wp_upload_dir();
+    $temp_dir = trailingslashit($upload_dir['basedir']) . 'dmi-temp/';
+
+    if (!is_dir($temp_dir)) return;
+
+    $files = glob($temp_dir . '*');
+    $now = time();
+    $cutoff = $now - ($days * 86400);
+
+    foreach ($files as $file) {
+        if (is_file($file) && filemtime($file) < $cutoff) {
+            unlink($file);
+        }
+    }
 }

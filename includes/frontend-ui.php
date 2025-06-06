@@ -1,15 +1,14 @@
 <?php
 /*
- * File: frontend-ui.php
+ * File: includes/frontend-ui.php
  * Description: Frontend UI and script handling for image upload and Dynamic Mockups rendering
  * Plugin: Dynamic Mockups Integration
  * Author: Eric Kowalewski
- * Last Updated: May 17, 2025 23:36 EDT
+ * Last Updated: 2025-06-06 18:45 EDT
  */
 
 if (!defined('ABSPATH')) exit;
 
-// Load styles/scripts only on product pages
 add_action('wp_enqueue_scripts', function () {
     if (!is_singular('product')) return;
 
@@ -27,16 +26,10 @@ add_action('wp_enqueue_scripts', function () {
     ));
 });
 
-// Inject upload UI below Add to Cart button
-add_action('woocommerce_after_add_to_cart_button', function () {
-    if (!is_singular('product')) return;
-
+add_action('woocommerce_before_add_to_cart_button', function () {
     global $product;
 
-    if (!$product || !is_a($product, 'WC_Product')) {
-        echo "<script>console.warn('⚠️ DMI: No valid WC_Product');</script>";
-        return;
-    }
+    if (!is_singular('product') || !$product || !is_a($product, 'WC_Product')) return;
 
     $mockup_uuid = get_post_meta($product->get_id(), '_dmi_mockup_uuid', true);
     $smartobject_uuid = get_post_meta($product->get_id(), '_dmi_smartobject_uuid', true);
@@ -46,21 +39,23 @@ add_action('woocommerce_after_add_to_cart_button', function () {
         return;
     }
 
-    echo "<script>console.log('✅ DMI: Injecting upload UI under Add to Cart');</script>";
-    ?>
+    // Add dynamic class for layout control
+    $type_class = $product->is_type('variable') ? 'dmi-variable' : 'dmi-simple';
 
-    <div id="dmi-upload-container" style="background: none; border: none; padding: 0;">
-        <input type="file" id="dmi-upload" accept="image/png, image/jpeg" style="display:none;">
-        <button type="button" id="dmi-upload-button">Upload your own image</button>
-        <div id="dmi-upload-preview"></div>
-    </div>
+    echo '<div class="dmi-cart-block ' . esc_attr($type_class) . '">';
+    
+    echo '<div id="dmi-upload-container">';
+    echo '<input type="file" id="dmi-upload" accept="image/png, image/jpeg" style="display:none;">';
+    echo '<button type="button" id="dmi-upload-button" class="button alt dmi-upload-button">Upload your own image</button>';
+    echo '<div id="dmi-upload-preview"></div>';
+    echo '</div>';
 
-    <div id="dmi-spinner-overlay" style="display:none;">
-        <div class="dmi-spinner"></div>
-    </div>
+    echo '<div id="dmi-spinner-overlay" style="display:none;"><div class="dmi-spinner"></div></div>';
 
-    <input type="hidden" id="dmi-mockup-uuid" value="<?php echo esc_attr($mockup_uuid); ?>">
-    <input type="hidden" id="dmi-smartobject-uuid" value="<?php echo esc_attr($smartobject_uuid); ?>">
+    echo '<input type="hidden" id="dmi-mockup-uuid" value="' . esc_attr($mockup_uuid) . '">';
+    echo '<input type="hidden" id="dmi-smartobject-uuid" value="' . esc_attr($smartobject_uuid) . '">';
+    echo '<input type="hidden" id="dmi_color_count" name="dmi_color_count" value="">';
+    echo '<input type="hidden" id="dmi_color_hexes" name="dmi_color_hexes" value="">';
 
-    <?php
+    echo '</div>'; // .dmi-cart-block
 });

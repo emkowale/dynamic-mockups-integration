@@ -42,3 +42,7 @@ require_once plugin_dir_path(__FILE__) . 'includes/save-order-meta.php';
 require_once plugin_dir_path(__FILE__) . 'includes/email-render-handler.php';
 
 require_once plugin_dir_path(__FILE__) . 'includes/remove-email-product-image.php';
+
+require_once plugin_dir_path(__FILE__) . 'includes/admin-order-meta.php';
+
+require_once plugin_dir_path(__FILE__) . 'includes/cart-meta-handler.php';
