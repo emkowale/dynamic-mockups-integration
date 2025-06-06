@@ -1,0 +1,39 @@
+/*
+ * Filename: admin.css
+ * Author: Eric Kowalewski
+ * Plugin Name: Dynamic Mockups Integration
+ * Version: 1.9.6
+ * Date: 2025-04-29
+ * Time: 1:10 PM EST
+ */
+
+#dmi_mockup_selector {
+    display: flex;
+    overflow-x: auto;
+    padding: 5px 0;
+    gap: 10px;
+}
+
+#dmi_mockup_selector img {
+    width: 80px;
+    height: auto;
+    max-height: 80px;
+    object-fit: contain;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border 0.2s ease;
+}
+
+#dmi_mockup_selector img:hover {
+    border: 2px solid #999;
+}
+
+#dmi_mockup_selector img.selected {
+    border: 2px solid #007cba; /* WordPress blue */
+}
+
+#dmi_smart_object_selector {
+    margin-top: 10px;
+    width: 100%;
+}
+

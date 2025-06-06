@@ -95,10 +95,9 @@ function uploadQuantizedFile(file, hexList) {
       const uploadedImageUrl = response.data.url;
       console.log('🔗 Uploaded Image:', uploadedImageUrl);
 
-      //Uncomment to preview uploaded image before render
-      //if (jQuery('#dmi-upload-preview').length) {
-      //  jQuery('#dmi-upload-preview').html(`<img src="${uploadedImageUrl}" style="max-width: 100%; margin-top: 10px;">`);
-      //}
+      if (jQuery('#dmi-upload-preview').length) {
+        jQuery('#dmi-upload-preview').html(`<img src="${uploadedImageUrl}" style="max-width: 100%; margin-top: 10px;">`);
+      }
 
       // Store globally
       window.dmi_uploadedImageUrl = uploadedImageUrl;
